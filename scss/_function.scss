@@ -1,0 +1,13 @@
+
+//计算rem值
+@function rem($val){
+  //@return $val/($val*0+1);
+
+  @if $val !=0 {
+    $val: $val/($val*0+1);
+    $val: $val/100;
+    $val: $val + rem;
+  }
+  @return $val;
+}
+

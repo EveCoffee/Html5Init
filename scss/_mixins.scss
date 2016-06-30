@@ -1,0 +1,31 @@
+@import "function";
+
+@mixin text-truncate() {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin size($width, $height){
+  width: $width;
+  height: $height;
+}
+
+@mixin btn-reset(){
+  border: none;
+  outline: none;
+}
+
+@mixin clearfix(){
+  &:before, &:after{
+    content: " ";
+    display: block;
+    clear: both;
+  }
+}
+
+@mixin sprite-item($sprites, $item){
+  width: rem(image-width(sprite-file($sprites, $item)));
+  height: rem(image-height(sprite-file($sprites, $item)));
+  background-position: rem(nth(sprite-position($sprites, $item), 1)) rem(nth(sprite-position($sprites, $item), 2));
+}
