@@ -58,7 +58,7 @@ gulp.task("watch", function(){
 gulp.task("auto", function(){
     browserSync.init({ server: "." });
     gulp.watch('scss/**/*.scss', ["scss"]);
-    //gulp.watch("es2015/**/*.js", ["es2015"]);
+    gulp.watch("es2015/**/*.js", ["es2015"]);
     gulp.watch("*.html").on('change', browserSync.reload);
     gulp.watch("js/*.js").on('change', browserSync.reload);
 });
@@ -93,4 +93,4 @@ gulp.task("build",["scss"], function () {
 
 
 
-gulp.task("default", ["scss", "auto"]);
+gulp.task("default", ["scss", "auto", "es2015"]);
