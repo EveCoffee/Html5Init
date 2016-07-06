@@ -29,3 +29,8 @@
   height: rem(image-height(sprite-file($sprites, $item)));
   background-position: rem(nth(sprite-position($sprites, $item), 1)) rem(nth(sprite-position($sprites, $item), 2));
 }
+
+@mixin background-image($url){
+  background: url($url) no-repeat;
+  background-size: cover;
+}
