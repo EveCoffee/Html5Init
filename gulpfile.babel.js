@@ -96,7 +96,7 @@ gulp.task("build",["scss"], function () {
 	rimraf(distUrl, done);
 });
 
-gulp.task("default", ["scss", "auto", "webpack"]);
+gulp.task("default", ["scss", "auto", "webpack:start"]);
 
 gulp.task("webpack:start", function () {
     const _webpack = spawn("webpack");
