@@ -6,6 +6,7 @@ mkdir scss css images js es2015
 # 下载需要的各种依赖
 wget https://raw.githubusercontent.com/EveCoffee/Html5Init/master/.babelrc
 wget https://raw.githubusercontent.com/EveCoffee/Html5Init/master/config.rb
+wget https://raw.githubusercontent.com/EveCoffee/Html5Init/master/tsconfig.json
 wget https://raw.githubusercontent.com/EveCoffee/Html5Init/master/package.json
 wget https://raw.githubusercontent.com/EveCoffee/Html5Init/master/gulpfile.babel.js
 wget https://raw.githubusercontent.com/EveCoffee/Html5Init/master/webpack.config.babel.js
