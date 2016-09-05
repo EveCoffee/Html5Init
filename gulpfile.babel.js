@@ -4,12 +4,12 @@ import sourcemaps from 'gulp-sourcemaps';
 import plumber from "gulp-plumber";
 import autoprefixer from "gulp-autoprefixer";
 import cssmin from "gulp-cssmin";
-// import scss from "gulp-sass";
+import scss from "gulp-sass";
 import uglify from "gulp-uglify";
 import browserSyncModule from "browser-sync";
 import rimraf from "rimraf";
 import sourceUpdate from "gulp-source-link-update";
-import compass from "gulp-compass";
+//import compass from "gulp-compass";
 import path from "path";
 import webpack from "webpack-stream";
 
@@ -24,11 +24,7 @@ gulp.task('scss', function () {
     return gulp.src('scss/*.scss')
         .pipe( sourcemaps.init() )
         .pipe(plumber())
-        .pipe(compass({
-            project: path.join(__dirname, '.'),
-            css: 'css',
-            sass: 'scss'
-        }))
+        .pipe(scss())
         .on('error', function (error) {
             console.log(error.toString());
             this.emit('end');

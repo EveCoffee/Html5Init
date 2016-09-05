@@ -22,4 +22,4 @@ cd ..
 npm install
 npm install gulp-sass
 
-wget https://raw.githubusercontent.com/EveCoffee/Html5Init/master/init.sh
+#wget https://raw.githubusercontent.com/EveCoffee/Html5Init/master/init.sh
