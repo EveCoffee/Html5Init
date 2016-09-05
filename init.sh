@@ -20,6 +20,6 @@ wget https://raw.githubusercontent.com/EveCoffee/Html5Init/master/scss/_function
 cd ..
 
 npm install
-npm install gulp-sass
+npm install gulp-sass --save-dev
 
 #wget https://raw.githubusercontent.com/EveCoffee/Html5Init/master/init.sh
