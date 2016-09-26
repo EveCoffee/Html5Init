@@ -5,15 +5,18 @@ import webpack from "webpack";
 export default {
     entry: (function () {
         var entry = {};
-
+        
         fs.readdirSync("es2015/")
             .filter(_path  => {
-                return fs.statSync(`es2015/${_path}`).isFile();
+                return fs.statSync(`es2015/${_path}`).isFile() && [".ts", ".js"].indexOf(path.extname(`es2015/${_path}`)) !== -1;
             })
             .map(_path =>{
                 entry[path.parse(_path).name] = `./es2015/${_path}`;
                 return `./es2015/${_path}`;
             });
+            
+            // common file
+            //entry["vendor"] = ["webpack-zepto", "fastclick"];
             
         return entry;
     })(),
@@ -46,10 +49,6 @@ export default {
             },
             {
                 test: /\.json$/,
-                // We could restrict using json-loader only on .json files in the
-                // node_modules/pixi.js directory, but the ability to load .json files
-                // could be useful elsewhere in our app, so I usually don't.
-                //include: path.resolve(__dirname, 'node_modules/pixi.js'),
                 loader: 'json'
             },
             {

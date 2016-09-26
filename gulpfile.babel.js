@@ -30,7 +30,7 @@ gulp.task('scss', function () {
         })
         // .pipe(scss().on('error', scss.logError))
         .pipe(autoprefixer({
-            browsers: ['last 3 versions', "IE 9"],
+            browsers: ['> 1%', "IE 9"],
             cascade: false
         }))
         //.pipe(minify())
