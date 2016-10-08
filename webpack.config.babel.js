@@ -28,11 +28,11 @@ export default {
     
     plugin: [
         new webpack.optimize.CommonsChunkPlugin("lib", "lib.js"),
-        new webpack.optimize.UglifyJsPlugin({
-            compress: {
-                warnings: false
-            }
-        }),
+        // new webpack.optimize.UglifyJsPlugin({
+        //     compress: {
+        //         warnings: false
+        //     }
+        // }),
         new webpack.optimize.DedupePlugin()
     ],
     
