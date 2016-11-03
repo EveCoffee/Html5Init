@@ -15,8 +15,7 @@ export default {
                 return `./es2015/${_path}`;
             });
             
-            // common file
-            //entry["vendor"] = ["webpack-zepto", "fastclick"];
+            entry["lib"] = ["babel-polyfill"];
             
         return entry;
     })(),
@@ -53,7 +52,7 @@ export default {
             },
             {
                 test: /\.ts|tsx?$/,
-                loader: 'ts-loader'
+                loaders: ['babel', 'ts-loader'] 
             },
             {
                 test: /\.scss|css$/,
