@@ -15,7 +15,7 @@ export default {
                 return `./es2015/${_path}`;
             });
             
-            entry["lib"] = ["babel-polyfill"];
+            //entry["lib"] = ["babel-polyfill"];
             
         return entry;
     })(),
@@ -26,13 +26,13 @@ export default {
     },
     
     plugin: [
-        new webpack.optimize.CommonsChunkPlugin("lib", "lib.js"),
+        //new webpack.optimize.CommonsChunkPlugin("lib", "lib.js"),
         // new webpack.optimize.UglifyJsPlugin({
         //     compress: {
         //         warnings: false
         //     }
         // }),
-        new webpack.optimize.DedupePlugin()
+        //new webpack.optimize.DedupePlugin()
     ],
     
     resolve: {
@@ -52,7 +52,7 @@ export default {
             },
             {
                 test: /\.ts|tsx?$/,
-                loaders: ['babel', 'ts-loader'] 
+                loaders: ['ts-loader'] 
             },
             {
                 test: /\.scss|css$/,
