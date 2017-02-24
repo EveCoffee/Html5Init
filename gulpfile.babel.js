@@ -7,27 +7,32 @@ import cssmin from "gulp-cssmin";
 import scss from "gulp-sass";
 import uglify from "gulp-uglify";
 import browserSyncModule from "browser-sync";
-import rimraf from "rimraf";
-import sourceUpdate from "gulp-source-link-update";
-//import compass from "gulp-compass";
+import os from "os";
+
 import path from "path";
+import moment from "moment";
 
-import {exec, spawn, execSync} from "child_process";
+
+import {exec, spawn, execSync, spawnSync} from "child_process";
 import compact from "lodash/compact";
+import del from "del";
 
+const browserSync = browserSyncModule.create();
 
-let browserSync = browserSyncModule.create();
+const distUrl = "dist/",
+      srcUrl  = "es2015/",
+      buildUrl = "js/";
 
 gulp.task('scss', function () {
 
     return gulp.src('scss/*.scss')
         .pipe( sourcemaps.init() )
-        .pipe(plumber())
-        .pipe(scss())
         .on('error', function (error) {
             console.log(error.toString());
             this.emit('end');
         })
+        .pipe(plumber())
+        .pipe(scss())
         // .pipe(scss().on('error', scss.logError))
         .pipe(autoprefixer({
             browsers: ['> 1%', "IE 9"],
@@ -39,21 +44,143 @@ gulp.task('scss', function () {
         .pipe(browserSync.stream());
 });
 
-gulp.task("es2015", function(){
-    return gulp.src("es2015/**/*.js")
-        .pipe( sourcemaps.init() )
-        .pipe(plumber())
-        .pipe(babel())
-        //.pipe(uglify())
-        //.pipe( sourcemaps.write('./maps'))
-        .pipe( gulp.dest('js/') );
+
+/**
+ * 启动webpack或者webpack-dev-server
+ */
+var webpackFn = function (progressName) {
+
+    var cmd = "",
+        params = [];
+
+    if(progressName === "webpack"){
+        cmd = "node";
+        params = ["./node_modules/webpack/bin/webpack", "-w", "true"]
+    }else if(progressName === "webpack-dev-server"){
+        cmd = "node";
+        params = ["./node_modules/webpack-dev-server/bin/webpack-dev-server"]
+    }else{
+        throw new Error(`未知参数值: ${progressName}, 暂只支持"webpack" 或者 "webpack-dev-server"`);
+    }
+
+    var packer = {
+        self: null,
+        
+        init: function(){
+            this.start();
+        },
+        
+        start: function () {
+            console.log("启动webpack进程...");
+            this.self = spawn(cmd, params);
+            this.self.stdout.on("data", function (data) {
+                console.log(data.toString());
+            })
+        },
+        stop: function () {
+            console.log("终止webpack进程..");
+            this.self.kill();
+        },
+        restart: function () {
+            this.stop();
+            this.start();
+        }
+    };
+
+    
+    packer.init();
+
+    gulp.watch(`${srcUrl}/*.js`, function (event) {
+        switch (event.type){
+            case "deleted":
+            case "added":
+                console.log("监听到文件数量发生了改变，正在重启webpack.");
+                packer.restart();
+        }
+    });
+
+    gulp.watch("webpack.config.js", function () {
+        console.log("监听到webpack配置发生了改变，正在重启webpack...");
+        packer.restart();
+    })
+
+};
+
+gulp.task("webpack", webpackFn.bind(this, "webpack"));
+
+gulp.task("server", webpackFn.bind(this, "webpack-dev-server"));
+
+
+gulp.task("clean", function () {
+    del.sync(distUrl);
 });
 
-gulp.task("watch", function(){
-    browserSync.init({ server: "." });
-    gulp.watch('less/**/*.less', ["less"]);
-    gulp.watch("es2015/**/*.js", ["es2015"]);
+gulp.task("publish", function () {
+    spawnSync("node", ["./node_modules/webpack/bin/webpack"]);
 });
+
+gulp.task("move-publish", function () {
+
+    return new Promise(function (resolve, reject) {
+
+        /**
+         * 异步文件拷贝的任务数量， 目前需要手动维护
+         */
+        var taskCount = 5;
+
+        function checkDone() {
+            if(--taskCount <= 0){
+                resolve();
+            }
+            console.log(taskCount+"...");
+        }
+
+        gulp.src("*.html")
+            .pipe(gulp.dest(distUrl))
+            .on("end", checkDone);
+
+        gulp.src("build/**/*.*")
+            .pipe(gulp.dest(distUrl + "build"))
+            .on("end", checkDone);
+
+        gulp.src("images/**/*.*")
+            .pipe(gulp.dest(distUrl + "images"))
+            .on("end", checkDone);
+
+        gulp.src("css/**/*.css")
+            .pipe(gulp.dest(distUrl + "css"))
+            .on("end", checkDone);
+
+        gulp.src("js/**/*.*")
+            .pipe(gulp.dest(distUrl + "js"))
+            .on("end", checkDone);
+
+    });
+
+});
+
+gulp.task("dist", ["clean", "publish", "move-publish"], function () {
+    
+    console.log("正在将需要的文件复制到dist目录");
+
+    if(os.platform() === "darwin"){
+        console.log("你是OSX系统，似乎可以做点什么");
+        console.log("尝试打包压缩文件...");
+
+        var z = spawn("zip", ["-r", "dist" + moment().format("YYYY年MM月DD日hhmmss") + ".zip", "-p",  "dist/"]);
+        z.stdout.on("data", function (data) {
+            console.log(data.toString());
+        });
+
+    }else{
+
+        console.log("你并非osx系统，打包zip请手动针对dist目录进行压缩");
+
+    }
+
+});
+
+gulp.task("build", ["dist"]);
 
 gulp.task("auto", function(){
     browserSync.init({ server: "." });
@@ -63,112 +190,4 @@ gulp.task("auto", function(){
     gulp.watch("js/*.js").on('change', browserSync.reload);
 });
 
-// 打包
-gulp.task("build",["scss"], function () {
-
-	var distUrl = "dist";
-
-	function done() {
-		// 打包其他文件
-		gulp.src("*.html")
-            .pipe(sourceUpdate())
-			.pipe(gulp.dest(distUrl));
-
-		gulp.src("css/*.css")
-            .pipe(cssmin())
-			.pipe(gulp.dest(`${distUrl}/css/`));
-
-		gulp.src("images/*")
-			.pipe(gulp.dest(`${distUrl}/images/`));
-
-		gulp.src("js/*")
-            // .pipe(uglify())
-			.pipe(gulp.dest(`${distUrl}/js/`))
-	}
-
-
-	// 清空文件夹
-	rimraf(distUrl, done);
-});
-
-gulp.task("default", ["scss", "auto", "webpack:start"]);
-
-gulp.task("webpack:start", function () {
-    const _webpack = spawn("webpack");
-
-    _webpack.stdout.on("data", (data) => {
-        console.log(data.toString());
-    });
-});
-
-gulp.task("webpack:restart", function () {
-
-    gulp.start("webpack:stop", function () {
-        gulp.start("webpack:start", function () {
-            console.log("webpack已经重新启动...");
-        });
-
-    });
-});
-
-gulp.task("webpack:stop", function () {
-    var result = getProgressIdByName("webpack", "node");
-
-    console.log(`找到${result.length}个进程, 正在准备杀死进程...`);
-    console.log("正在终止webpack...");
-
-    killProgressById(result);
-});
-
-/**
- * 查找进程ID
- * @param name 进程名字, 作为 grep 关键字进行过滤
- * @param args 需要再次过滤的字符串或者字符串数组
- * @return String[] 返回符合条件的进程id
- */
-function getProgressIdByName(name, args) {
-
-    args = typeof args === "string" ? [args] : [];
-
-    var stdOut = execSync(`ps | grep '${name}'`).toString();
-    var results = stdOut.split("\n");
-    results = results.filter(out => {
-
-        if(args){
-            // 根据传入参数进行过滤
-            return args.every(arg => {
-                return out.indexOf(arg) !== -1;
-            });
-        }else{
-            return true;
-        }
-
-
-    }).map(out => {
-
-        // 提取出进程id
-        var r = /\d+/.exec(out);
-
-        if(r && r.length === 1){
-            return r[0];
-        }else{
-            return null;
-        }
-
-    });
-
-    return compact(results);
-
-}
-
-/**
- * 通过id杀死指定进程
- * @param id String||String[] 进程id
- */
-function killProgressById(id){
-    id = typeof id === "string" ? [id] : id;
-    id.forEach((_id) => {
-        execSync(`kill ${id}`);
-    });
-
-}
+gulp.task("default", ["scss", "auto", "webpack"]);

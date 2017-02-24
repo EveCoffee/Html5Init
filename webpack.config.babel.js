@@ -43,7 +43,7 @@ export default {
         loaders: [
             {
                 test: /\.js|jsx$/,
-                loaders: ['babel'],
+                loaders: ['babel-loader'],
                 exclude: /node_modules/
             },
             {
@@ -56,10 +56,19 @@ export default {
             },
             {
                 test: /\.scss|css$/,
-                loaders: ["style", "css", "sass"]
+                loaders: ["style-loader", "css-loader", "sass-loader"]
+            },
+            ,
+            {
+                test: /\.html$/,
+                loaders: ['html-loader']
+            },
+            {
+                test: /\.(png|jpg|jpeg|svg)$/,
+                loader: "url-loader?limit=50000"
             }
         ]
     },
-    watch: true,
+    
     devtool: 'source-map'
 };
