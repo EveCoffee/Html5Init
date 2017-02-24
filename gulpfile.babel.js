@@ -99,7 +99,7 @@ var webpackFn = function (progressName) {
         }
     });
 
-    gulp.watch("webpack.config.js", function () {
+    gulp.watch("webpack.config*.js", function () {
         console.log("监听到webpack配置发生了改变，正在重启webpack...");
         packer.restart();
     })
