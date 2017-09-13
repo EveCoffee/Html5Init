@@ -24,6 +24,7 @@ const distUrl = "dist/",
       srcUrl  = "es2015/",
       buildUrl = "js/";
 
+taskScss.enablePX2REM(true);
 taskScss.install(gulp, browserSync);
 taskWebpack.install(gulp);
 buildTask.install(gulp);
