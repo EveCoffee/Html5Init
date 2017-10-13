@@ -15,10 +15,10 @@ var webpackFn = function (progressName, gulp) {
 
     if(progressName === "webpack"){
         cmd = "node";
-        params = ["./node_modules/webpack/bin/webpack", "-w", "true"]
+        params = ["./node_modules/webpack/bin/webpack", "-w", "true", "--color"]
     }else if(progressName === "webpack-dev-server"){
         cmd = "node";
-        params = ["./node_modules/webpack-dev-server/bin/webpack-dev-server"]
+        params = ["./node_modules/webpack-dev-server/bin/webpack-dev-server", "--color"]
     }else{
         throw new Error(`未知参数值: ${progressName}, 暂只支持"webpack" 或者 "webpack-dev-server"`);
     }
@@ -50,7 +50,7 @@ var webpackFn = function (progressName, gulp) {
     
     packer.init();
 
-    gulp.watch(`${srcUrl}/*.js`, function (event) {
+    gulp.watch(`${srcUrl}/*.+(ts|js)`, function (event) {
         switch (event.type){
             case "deleted":
             case "added":

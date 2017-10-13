@@ -3,12 +3,6 @@
     "target": "es5",
     "sourceMap": true,
     "allowSyntheticDefaultImports": true,
-    "lib": ["es2015", "dom"]
-  },
-  "include": [
-    "node_modules/@types/*"  
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+    "lib": ["dom", "es2015.promise", "es5"]
+  }
 }

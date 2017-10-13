@@ -1,5 +1,16 @@
+import path from "path";
+
+let distUrl = "dist/";
+
 export default {
-    distUrl: "dist/",
+    distUrl: distUrl,
     srcUrl: "es2015/",
-    buildUrl: "js/"
+    buildUrl: "js/",
+    publish: [
+        {
+            from: "css/",
+            to: path.join(distUrl, "css"),
+            middleware: []
+        }    
+    ]
 }
