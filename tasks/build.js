@@ -39,17 +39,20 @@ export default {
                     if(--taskCount <= 0){
                         bar.completed = true;
                         //resolve();
-                        setTimeout(function(){
-                            resolve()
-                        }, 3000);
+                        resolve();
+
                     }
                     // console.log(taskCount+"...");
+
+                    bar && bar.tick();
+
                 }
                 
                 /**
                  * 增加打包任务。 使用示例参考下方文件
                  * @param source {String} 合法的源路径文件
                  * @param target {String} 合法的目标目录。 备注： 可以不存在，会自动新建
+                 * @param middleTasks {Function[]} 中间件任务
                  */ 
                 function addTask(source, target, middleTasks=[]){
                     taskCount++;
@@ -60,7 +63,6 @@ export default {
                     task.pipe(gulp.dest(target));
                     task.on("end", checkDone);
                     
-                    bar && bar.tick()
                 }
                 
                 setTimeout(() => {
