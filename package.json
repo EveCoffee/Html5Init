@@ -42,6 +42,8 @@
     "webpack": "^1.13.2"
   },
   "scripts": {
+    "start": "gulp",
+    "build": "gulp build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "冷色的咖啡",

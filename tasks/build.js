@@ -78,6 +78,8 @@ export default {
                 addTask("*.html", distUrl);
                 
                 addTask("build/**/*.*", distUrl + "build");
+
+                addTask("fonts/**/*.*", distUrl + "fonts");
                 
                 addTask("images/**/*.*", distUrl + "images");
                 
