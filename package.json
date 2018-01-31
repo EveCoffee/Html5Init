@@ -7,6 +7,9 @@
     "type": "git",
     "url": ""
   },
+  "babel": {
+    "presets": ["es2015"]
+  },
   "dependencies": {
     "ascii-progress": "^1.0.5",
     "del": "^2.2.2",
